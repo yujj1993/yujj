@@ -1,0 +1,13 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Name="模拟测试"
+GenericName="模拟测试"
+#X-GNOME-FullName=Server VM
+Exec=firefox http://rhgls.domain254.example.com/exam/
+Terminal=false
+Icon=fedora-logo-sprite
+Type=Application
+StartupNotify=true
+Categories=GTK;GNOME;Utility;Accessibility;
+Name[en_US]=模拟测试
