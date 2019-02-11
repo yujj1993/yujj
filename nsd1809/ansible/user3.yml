@@ -1,0 +1,30 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+    - name: xxhh
+      user:
+        name: "{{item.name}}"
+        group: "{{item.group}}"
+        password: "{{item.pwd|password_hash('sha512')}}"
+      with_items:
+        - 
+          name: "nb"
+          pwd: "bn"
+          group: "nobody"
+        - 
+          name: "kk"
+          pwd: "kk"
+          group: "users"
+        - 
+          name: "dd"
+          pwd: "dd"
+          group: "sshd" 
+        - 
+          name: "jj"
+          pwd: "jj"
+          group: "wheel"
+        - 
+          name: "xx"
+          pwd: "oo"
+          group: "root"

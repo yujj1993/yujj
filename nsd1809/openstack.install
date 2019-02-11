@@ -1,0 +1,24 @@
+nova 安装
+1  创建一个虚拟机 100G 磁盘，2块网卡，内存（openstack 9G，nova01 6G）
+2  扩容磁盘 
+3  配置 ip 及 主机名  ifcfg-eth0    /etc/hosts 
+4  检查时间同步  chronyc  sources  -v
+5  检查 dns 域名解析服务  /etc/resolv.conf
+6  配置 yum 源 (12源   10731包)
+7  安装依赖软件包  
+ yum -y install libvirt-client python-setuptools libvirt-daemon-driver-qemu libvirt-daemon qemu-kvm
+8  安装 openstack-packstack
+9  创建应答文件 packstack  --gen-answer-file=answer.ini 
+42 :  CONFIG_SWIFT_INSTALL=n
+75 :  CONFIG_NTP_SERVERS=192.168.1.254
+98 :  CONFIG_COMPUTE_HOSTS=192.168.1.10,192.168.1.11
+102:  CONFIG_NETWORK_HOSTS=192.168.1.10,192.168.1.11
+333:  CONFIG_KEYSTONE_ADMIN_PW=a
+840:  CONFIG_NEUTRON_ML2_TYPE_DRIVERS=flat,vxlan
+876:  CONFIG_NEUTRON_ML2_VXLAN_GROUP=239.1.1.5
+910:  CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet1:br-ex
+921:  CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-ex:eth0
+936:  CONFIG_NEUTRON_OVS_TUNNEL_IF=eth1
+1179: CONFIG_PROVISION_DEMO=n
+
+10  安装 openstack 和 nova : packstack --answer-file=answer.ini

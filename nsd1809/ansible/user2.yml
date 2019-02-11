@@ -1,0 +1,7 @@
+---
+- hosts: app
+  remote_user: root
+  tasks:
+    - shell: useradd z3
+      ignore_errors: True
+    - shell: echo 123456|passwd --stdin z3

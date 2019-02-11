@@ -1,0 +1,18 @@
+1  创建一个文件夹
+    mkdir   /var/vroot
+2  安装 bash 软件
+    yum install --installroot=/var/vroot bash coreutils
+3  执行 chroot
+    chroot   /var/vroot
+
+ssh  用户 chroot 测试
+    adduser  uu
+    passwd   uu
+    cp   /etc/shadow  /var/vroot/etc/
+    cp   /etc/passwd  /var/vroot/etc/
+
+修改  /etc/ssh/sshd_config
+     Match User uu
+        ChrootDirectory /var/vroot
+重启服务  systemctl  restart  sshd
+远程使用  uu 用户登录

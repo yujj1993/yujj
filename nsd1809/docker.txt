@@ -1,0 +1,35 @@
+
+server 上传镜像
+配置  /etc/docker/daemon.json
+systemctl   restart   docker
+docker  run -itd -p 5000:5000  registry
+------------------------------------------------------------------
+docker tag busybox:latest 192.168.1.11:5000/busybox:latest
+docker push 192.168.1.11:5000/busybox:latest
+
+client  使用共享镜像启动容器
+scp docker01:/etc/docker/daemon.json  /etc/docker/
+systemctl restart docker
+docker run -it 192.168.1.11:5000/busybox:latest
+------------------------------------------------------------------
+查看镜像
+http://192.168.1.11:5000/v2/_catalog
+
+查看镜像的标签
+http://192.168.1.11:5000/v2/镜像名称/tags/list
+15:55 -- 16:15
+------------------------------------------------------------------
+使用 NFS 让 docker1  和 docker2 内部的容器实现数据共享
+docker1  变成  nginx
+docker2  变成  apache
+让 apache 和 nginx 共享首页   
+       -v  宿主机路径：容器内路径
+       -p  宿主机端口：容器端口
+------------------------------------------------------------------
+创建 docker1 交换机，子网 10.10.10.0/24
+docker network create --subnet 10.10.10.0/24 docker1
+    docker0 上的容器
+f9452    172.17.0.5          4f3d3    172.17.0.6
+    docker1 上的容器
+2f842    10.10.10.2          686f6    10.10.10.3
+

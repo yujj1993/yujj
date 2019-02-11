@@ -1,0 +1,58 @@
+/usr/local/hadoop/sbin/stop-all.sh
+ALL:   rm -rf  /var/hadoop/*  
+同步配置文件  mynn01  给  node  1  2  3
+格式化   ./bin/hdfs namenode  -format
+启动      ./sbin/start-dfs.sh
+---------------------------------------------------------------------
+1、  nfsgw, mynn01  配置  /etc/hosts
+192.168.1.10	mynn01
+192.168.1.11	node1
+192.168.1.12	node2
+192.168.1.13	node3
+192.168.1.14	nfsgw
+
+2、创建代理用户 nfsgw,  mynn01
+groupadd  -g 888   nfsuser
+useradd  -u  888  -g  888  -r   nfsuser
+
+3、HDFS 集群授权
+停止 HDFS 集群， ./sbin/stop-all.sh
+配置  core-site.xml
+hadoop.proxyuser.nfsuser.groups
+hadoop.proxyuser.nfsuser.hosts
+value  -->   *     
+
+同步配置文件到   node1   node2   node3
+启动  hdfs 集群  ./sbin/start-dfs.sh
+验证集群配置   jps     ./bin/hdfs    dfsadmin    -report
+-----------------------------------------------------------------
+以下操作全部在 NFSGW 机器上完成
+安装  java-1.8.0-openjdk-devel
+拷贝  mynn01:/usr/local/hadoop   到本机
+修改  hdfs-site.xml
+nfs.exports.allowed.hosts     ->   *  rw
+nfs.dump.dir        ->   /var/nfstmp
+
+创建  nfstmp 文件夹  mkdir  /var/nfstmp
+赋权  chown  nfsuser.nfsuser   /var/nfstmp
+         setfacl -m user:nfsuser:rwx   /usr/local/hadoop/logs
+
+启动服务
+检查系统是否有  rpcbind  和 nfs-utils 软件
+rpm -qa |grep -P "rpcbind|nfs"
+如果有需要卸载
+yum  remove  -y   rpcbind  nfs-utils
+卸载完成后重启系统   reboot
+
+必须先启动  portmap 后启动 nfs3
+启动 portmap 必须是  root 用户
+./sbin/hadoop-daemon.sh --script ./bin/hdfs start portmap
+
+启动 nfs3 必须是 nfsuser 用户
+./sbin/hadoop-daemon.sh --script ./bin/hdfs start nfs3
+
+验证  jps
+在 192.168.1.20 机器上
+安装软件    yum install -y  nfs-utils
+mount  -t  nfs  -o vers=3,proto=tcp,nolock,noatime,sync  192.168.1.14:/   /mnt/
+

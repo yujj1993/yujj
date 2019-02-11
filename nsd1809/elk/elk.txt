@@ -1,0 +1,63 @@
+创建索引 index
+curl -XPUT "http://192.168.1.13:9200/tedu/" -d 
+'{
+    "settings":{
+        "index":{
+             "number_of_shards": 5,
+             "number_of_replicas": 1
+         }
+    }
+}'
+
+增
+curl  -XPUT "http://192.168.1.13:9200/tedu/nsd1809/2" -d '{ "姓名": "刘美玲",
+"性别": "女",
+"年龄": "20",
+"爱好": "赵成明"
+}'
+
+改
+curl -XPOST "http://192.168.1.13:9200/tedu/nsd1809/2/_update" -d '{
+"doc": { "年龄": "18" }
+}'
+
+查
+curl  -XGET  "http://192.168.1.11:9200/tedu/nsd1809/2"
+参数 ?pretty 竖排显示
+
+删
+curl  -XDELETE "http://192.168.1.11:9200/tedu/nsd1809/2"
+数据库删根
+curl -XDELETE "http://192.168.1.11:9200/*"
+
+手册地址
+https://www.elastic.co/guide/en/logstash/current/index.html
+
+正则表达式宏
+/opt/logstash/vendor/bundle/jruby/1.9/gems/logstash-patterns-core-2.0.5/patterns/grok-patterns
+
+1  数据的清理
+kibana  删除之前创建的数据
+清理 Elasticsearch 的数据
+curl -XDELETE "http://192.168.1.11:9200/*"
+systemctl restart kibana
+
+2  在 web 服务器上，安装配置 filebeat
+yum install filebeat
+修改 filebeat.yml 
+004:filebeat:
+006:  prospectors:
+008:    -
+014:      paths:
+015:        - /var/log/httpd/access_log
+031:      input_type: log
+072:      document_type: httplog
+164:  registry_file: /var/lib/filebeat/registry
+180:output:
+278:  logstash:
+280:    hosts: ["192.168.1.25:5044"]
+346:shipper:
+387:logging:
+398:  files:
+407:    rotateeverybytes: 10485760 # = 10MB
+

@@ -1,0 +1,29 @@
+---
+- hosts: db
+  remote_user: root
+  tasks:
+    - name: install the latest version of Apache
+      yum:
+        name: httpd
+        state: latest
+    - copy:
+        src: httpd.conf
+        dest: /etc/httpd/conf/httpd.conf
+        owner: root
+        group: root
+        mode: 0644 
+      tags: copyconf
+      notify:
+        - reload httpd
+    - copy:
+        src: index.html
+        dest: /var/www/html/index.html
+        owner: apache
+        group: apache
+        mode: 0644
+  handlers:
+    - name: reload httpd
+      service:
+        name: httpd
+        state: restarted
+        enabled: yes
